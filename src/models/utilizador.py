@@ -1,16 +1,10 @@
 class Utilizador:
-    total_utilizadores = 0
-
-    def __init__(self, idUtilizador: int, login: str, passhash: str, perfil: str, ativo: bool):
+    def __init__(self, idUtilizador: int, login: str, passhash: str, perfil: str = "Indefinido", ativo: bool = True):
         self.idUtilizador = idUtilizador
         self.login = login
         self.passhash = passhash
         self.perfil = perfil
         self.ativo = ativo
-        Utilizador.total_utilizadores += 1
 
-    def criarUtilizador(self, user: Utilizador):
-        pass
-
-    def autenticar(self, login: str, passhash: str) -> str:
-        return ""
+    def __str__(self):
+        return f"Utilizador(ID: {self.idUtilizador}, Login: {self.login}, Perfil: {self.perfil}, Ativo: {self.ativo})"
