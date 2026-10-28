@@ -1,5 +1,7 @@
 # bibliotecas
-from models import utilizador
+from db.connection import initialize_database
+from src.models import utilizador
+initialize_database()
 
 while True:
     answer = input( "0 - Sair\n"

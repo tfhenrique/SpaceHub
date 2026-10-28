@@ -2,7 +2,7 @@ import pyodbc
 
 # Parâmetros de configuração para a ligação ao SQL Server
 SERVER_NAME = 'DESKTOP-NI0HD87\\SQLEXPRESS'
-DATABASE_NAME = 'SpaceHub'
+DATABASE_NAME = 'SpaceHub.db'
 
 # String de conexão usando Autenticação do Windows (Trusted_Connection)
 DB_CONFIG = (
@@ -11,6 +11,13 @@ DB_CONFIG = (
     f"DATABASE={DATABASE_NAME};"
     "Trusted_Connection=yes;"
 )
+
+def initialize_database():
+    schema_path = r"D:\IEFP\Formação UFCDs\UFCD 7 10790\Github\SpaceHub\db\schema.sql"
+
+    with testar_conexao() as conn:
+        schema = schema_path.read_text(encoding="utf-8")
+        conn.executescript(schema)
 
 def testar_conexao():
     try:
