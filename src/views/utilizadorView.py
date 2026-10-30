@@ -1,9 +1,12 @@
-from controllers.utilizadorController import UtilizadorController
-from main import limpar_tela
+import os
+from src.controllers.utilizadorController import UtilizadorController
 
 class UtilizadorView:
     def __init__(self):
         self.controller = UtilizadorController()
+
+    def limpar_tela(self):
+        os.system("cls" if os.name == "nt" else "clear")
 
     def exibir_menu(self) -> str:
         print(
@@ -16,12 +19,12 @@ class UtilizadorView:
 
     def menu_principal(self):
         while True:
-            limpar_tela()
+            self.limpar_tela()
             opcao = self.exibir_menu()
 
             match opcao:
                 case "1":
-                    limpar_tela()
+                    self.limpar_tela()
                     print("\n--- Criar Utilizador ---")
                     login = input("Nome de utilizador: ")
                     passhash = input("Password: ")
@@ -36,7 +39,7 @@ class UtilizadorView:
                     input("\nPressiona Enter para voltar ao menu...")
 
                 case "2":
-                    limpar_tela()
+                    self.limpar_tela()
                     print("\n--- Autenticação ---")
                     login = input("Nome de utilizador: ")
                     passhash = input("Password: ")

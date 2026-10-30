@@ -2,7 +2,7 @@ from pathlib import Path
 import pyodbc
 
 # Parâmetros de configuração para a ligação ao SQL Server
-SERVER_NAME = "DESKTOP-NI0HD87\\SQLEXPRESS"
+SERVER_NAME = "DESKTOP-NI0HD87"
 DATABASE_NAME = "SpaceHub" 
 
 # String de conexão com Autenticação do Windows (Trusted_Connection)
