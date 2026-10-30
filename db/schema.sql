@@ -108,7 +108,7 @@ GO
 
 CREATE TABLE Utilizador (
     idUtilizador INT IDENTITY(1,1) PRIMARY KEY,
-    membro_id INT NOT NULL,
+    membro_id INT,
     login_utilizador VARCHAR(50),
     password_hash VARCHAR(255),
     perfil VARCHAR(10),
