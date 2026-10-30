@@ -1,14 +1,15 @@
-import sqlite3
+import pyodbc
+from db.connection import DB_CONFIG
 
 
 class UtilizadorRepository:
 
     def __init__(self, db_path="db/SpaceHub.db"):
-        self.db_path = db_path
+        self.db_config = DB_CONFIG
 
     def inserir(self, login: str, passhash: str) -> bool:
         try:
-            conexao = sqlite3.connect(self.db_path)
+            conexao = pyodbc.connect(self.db_config)
             cursor = conexao.cursor()
             
             # Como o utilizador ainda não se codrastrou como membro o membro_id é None
@@ -23,13 +24,13 @@ class UtilizadorRepository:
             conexao.commit()
             conexao.close()
             return True
-        except sqlite3.Error as e:
+        except pyodbc.Error as e:
             print(f"\n[Erro Base de Dados] {e}")
             return False
 
     def buscar_por_login(self, login: str):
         try:
-            conexao = sqlite3.connect(self.db_path)
+            conexao = pyodbc.connect(self.db_config)
             cursor = conexao.cursor()
 
             cursor.execute(
@@ -44,6 +45,6 @@ class UtilizadorRepository:
 
             conexao.close()
             return resultado
-        except sqlite3.Error as e:
+        except pyodbc.Error as e:
             print(f"\n[Erro Base de Dados] {e}")
             return None

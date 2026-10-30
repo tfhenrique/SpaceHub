@@ -1,7 +1,7 @@
 from src.services.utilizadorService import UtilizadorService
 
 
-class ControllerUtilizador:
+class UtilizadorController:
 
     def __init__(self):
         # Instancia o Service para aplicar a lógica

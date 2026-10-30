@@ -1,10 +1,10 @@
 # bibliotecas
 import os
 from db.connection import initialize_database
-from src.views.viewUtilizador import viewUtilizador
+from views.utilizadorView import UtilizadorView
 
 # Iniciação dos componentes do sistema
-view_uti = viewUtilizador()
+view_uti = UtilizadorView()
 
 def main():
     # Inicializa a base de dados

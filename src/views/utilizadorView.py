@@ -1,9 +1,9 @@
-from src.controllers.controllerUtilizador import ControllerUtilizador
+from controllers.utilizadorController import UtilizadorController
 from main import limpar_tela
 
-class viewUtilizador:
+class UtilizadorView:
     def __init__(self):
-        self.controller = ControllerUtilizador()
+        self.controller = UtilizadorController()
 
     def exibir_menu(self) -> str:
         print(
