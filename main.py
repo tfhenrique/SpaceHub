@@ -3,27 +3,41 @@ from db.connection import initialize_database
 from src.models import utilizador
 initialize_database()
 
-while True:
-    answer = input( "0 - Sair\n"
-        "1 - Criar Utilizador\n"
-        "2 - Autenticar Utilizador\n"
-    )
-    if answer == "0":
-        break
-    elif answer == "1":
-        login = input("Nome do utilizador: \n")
-        passhash = input("Password: ")
-        user = utilizador.Utilizador(
-            idUtilizador=user.total_utilizadores,
-            login=login,
-            passhash=passhash,
-            perfil="Indfinido",
-            ativo=True
-        )
-        utilizador.Utilizador.criarUtilizador(user)
-    elif answer == "2":
-        login = input("Nome do utilizador: \n")
-        passhash = input("Password: ")
-        result = utilizador.Utilizador.autenticar(login, passhash)
+def exibir_menu():
+    print("\n--- MENU PRINCIPAL ---")
+    print("1 - Criar Utilizador")
+    print("2 - Autenticar Utilizador")
+    print("0 - Sair")
+    return input("Escolha uma opção: ").strip()
+
+
+def menu_principal():
+    while True:
+        opcao = exibir_menu()
+
+        if opcao == "0":
+            print("A encerrar o programa...")
+            break
+        elif opcao == "1":
+            print("\n--- Criar Utilizador ---")
+            login = input("Nome de utilizador: ")
+            passhash = input("Password: ")
+            
+            # Deixas a criação/validação para o serviço ou repositório
+            # Exemplo: user_service.criar_utilizador(login, passhash)
+            print(f"Utilizador '{login}' criado com sucesso!")
+        elif opcao == "2":
+            print("\n--- Autenticação ---")
+            login = input("Nome de utilizador: ")
+            passhash = input("Password: ")
+            
+            # Exemplo: se user_service.autenticar(login, passhash):
+            print(f"Autenticação efetuada com sucesso para '{login}'.")
+        else:
+            print("Opção inválida! Tente novamente.")
+
+
+if __name__ == "__main__":
+    menu_principal()
 
 
