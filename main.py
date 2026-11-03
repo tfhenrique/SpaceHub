@@ -1,6 +1,6 @@
 # bibliotecas
 from db.connection import initialize_database
-from src.models import utilizador
+from src.models.utilizador import Utilizador
 initialize_database()
 
 def exibir_menu():
