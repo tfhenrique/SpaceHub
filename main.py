@@ -1,43 +1,19 @@
 # bibliotecas
+import os
 from db.connection import initialize_database
-from src.models.utilizador import Utilizador
-initialize_database()
+from src.views.utilizadorView import UtilizadorView
 
-def exibir_menu():
-    print("\n--- MENU PRINCIPAL ---")
-    print("1 - Criar Utilizador")
-    print("2 - Autenticar Utilizador")
-    print("0 - Sair")
-    return input("Escolha uma opção: ").strip()
+# Iniciação dos componentes do sistema
+view_uti = UtilizadorView()
 
+def main():
+    # Inicializa a base de dados
+    initialize_database()
 
-def menu_principal():
-    while True:
-        opcao = exibir_menu()
-
-        if opcao == "0":
-            print("A encerrar o programa...")
-            break
-        elif opcao == "1":
-            print("\n--- Criar Utilizador ---")
-            login = input("Nome de utilizador: ")
-            passhash = input("Password: ")
-            
-            # Deixas a criação/validação para o serviço ou repositório
-            # Exemplo: user_service.criar_utilizador(login, passhash)
-            print(f"Utilizador '{login}' criado com sucesso!")
-        elif opcao == "2":
-            print("\n--- Autenticação ---")
-            login = input("Nome de utilizador: ")
-            passhash = input("Password: ")
-            
-            # Exemplo: se user_service.autenticar(login, passhash):
-            print(f"Autenticação efetuada com sucesso para '{login}'.")
-        else:
-            print("Opção inválida! Tente novamente.")
-
+    # Exibe o menu principal e processa as opções do utilizador
+    view_uti.menu_principal()
 
 if __name__ == "__main__":
-    menu_principal()
+    main()
 
 
