@@ -29,3 +29,18 @@ class UtilizadorService:
             return True
         
         return False
+
+    def get_utilizador_id(self, login: str, passhash: str) -> int:
+        # Vai buscar o utilizador à base de dados para obter o ID
+        utilizador = self.repository.buscar_por_login(login, passhash)
+
+        # Se o fetchone() não encontrar o utilizador, devolve none, então retornamos -1 para indicar que não foi encontrado
+        if not utilizador:
+            return -1
+        
+        password_na_bd = utilizador[3] 
+
+        if password_na_bd == passhash:
+            return utilizador[0]
+        
+        return -1

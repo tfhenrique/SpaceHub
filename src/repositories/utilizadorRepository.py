@@ -48,3 +48,24 @@ class UtilizadorRepository:
         except pyodbc.Error as e:
             print(f"\n[Erro Base de Dados] {e}")
             return None
+
+    def buscar_por_id(self, login: int, passhash: str):
+        try:
+            conexao = pyodbc.connect(self.db_config)
+            cursor = conexao.cursor()
+
+            cursor.execute(
+                """
+                SELECT * 
+                FROM Utilizador 
+                WHERE login_utilizador = ? AND password_hash = ?
+                """
+                , (login, passhash)
+            )
+            resultado = cursor.fetchone()
+
+            conexao.close()
+            return resultado
+        except pyodbc.Error as e:
+            print(f"\n[Erro Base de Dados] {e}")
+            return None

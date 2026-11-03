@@ -1,4 +1,5 @@
 import os
+import sys
 from src.controllers.utilizadorController import UtilizadorController
 
 class UtilizadorView:
@@ -17,7 +18,7 @@ class UtilizadorView:
         )
         return input("Escolha uma opção: ").strip()
 
-    def menu_principal(self):
+    def menu_principal(self) -> int:
         while True:
             self.limpar_tela()
             opcao = self.exibir_menu()
@@ -46,16 +47,15 @@ class UtilizadorView:
 
                     sucesso = self.controller.autenticar_utilizador(login, passhash)
                     if sucesso:
-                        print(f"\nAutenticação efetuada com sucesso para '{login}'.")
+                        input(f"\nAutenticação efetuada com sucesso para '{login}'.\nPressiona Enter para continuar...")
+                        return self.controller.get_utilizador_id(login)
                     else:
-                        print(f"\nFalha ao autenticar o utilizador '{login}'.")
-
-                    input("\nPressiona Enter para voltar ao menu...")
+                        input(f"\nFalha ao autenticar o utilizador '{login}'.\nPressiona Enter para voltar ao menu...")
 
                 case "0":
                     print("\nA encerrar o programa...")
-                    break
+                    sys.exit()
 
                 case _:
                     print("\nOpção inválida! Tente novamente.")
-                    input("\nPressiona Enter para continuar...")
+                    input("\nPressiona Enter para voltar ao menu...")
