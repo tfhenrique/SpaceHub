@@ -26,7 +26,7 @@ class MembroRepository:
             print(f"\n[Erro Base de Dados] {e}")
             return False
 
-    def buscar_por_nif(self, nif: str):
+    def get_nif(self, nif: str):
         try:
             conexao = pyodbc.connect(self.db_config)
             cursor = conexao.cursor()
@@ -46,3 +46,24 @@ class MembroRepository:
         except pyodbc.Error as e:
             print(f"\n[Erro Base de Dados] {e}")
             return None
+
+    def conectar_idMembro(self, id_utilizador: int, id_membro: int):
+        try:
+            conexao = pyodbc.connect(self.db_config)
+            cursor = conexao.cursor()
+
+            cursor.execute(
+                """
+                UPDATE Utilizador 
+                SET membro_id = ? 
+                WHERE id_utilizador = ?
+                """,
+                (id_membro, id_utilizador),
+            )
+
+            conexao.commit()
+            conexao.close()
+            return True
+        except pyodbc.Error as e:
+            print(f"\n[Erro Base de Dados] {e}")
+            return False

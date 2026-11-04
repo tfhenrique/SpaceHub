@@ -15,7 +15,7 @@ def main():
     while True:
         # Exibe o menu principal e processa as opções do utilizador
         userLoged = view_uti.menu_principal()
-    
+        
         # Quand o utilizador estiver logado, chama o menu de registo de membro
         menuOperation = view_membro.registar_membro_menu(userLoged)
         if menuOperation == -2:
