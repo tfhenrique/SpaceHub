@@ -109,8 +109,8 @@ GO
 CREATE TABLE Utilizador (
     idUtilizador INT IDENTITY(1,1) PRIMARY KEY,
     membro_id INT,
-    login_utilizador VARCHAR(50),
-    password_hash VARCHAR(255),
+    login_utilizador VARCHAR(50) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
     perfil VARCHAR(10),
     ativo BIT,
     CONSTRAINT FK_Utilizador_Membro FOREIGN KEY (membro_id) REFERENCES Membro(idMembro)

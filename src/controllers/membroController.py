@@ -1,6 +1,8 @@
 from src.services.membroService import MembroService
 from src.controllers.utilizadorController import UtilizadorController
 
+from src.models.membro import Membro
+
 class MembroController:
     
     def __init__(self):
@@ -41,3 +43,11 @@ class MembroController:
         except Exception as e:
             print(f"Erro no controller de autenticação de membro: {e}")
             return False
+
+    def get_member_info(self, id_membro: int) -> Membro:
+        try:
+            membro_info = self.service.get_member_info(id_membro)
+            return membro_info
+        except Exception as e:
+            print(f"Erro no controller no método get_membro_info: {e}")
+            return None

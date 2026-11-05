@@ -1,11 +1,10 @@
-from typing import Tuple
+from src.models.utilizador import Utilizador
 from src.services.utilizadorService import UtilizadorService
 
 
 class UtilizadorController:
 
     def __init__(self):
-        # Instancia o Service para aplicar a lógica
         self.service = UtilizadorService()
 
     def registar_utilizador(self, login: str, passhash: str) -> bool:
@@ -36,24 +35,24 @@ class UtilizadorController:
             print(f"Erro no controller de autenticação: {e}")
             return False
 
-    def get_utilizador_id(self, login: str, passhash: str) -> int:
+    def get_utilizador_id(self, login: str) -> int:
         try:
-            # Verifica se os campos não estão vazios
-            if not login or not passhash:
-                print("Erro: O login e a password não podem estar vazios.")
+            # Verifica se o campo não está vazio
+            if not login:
+                print("Erro: O login não pode estar vazio.")
                 return -1
 
-            # Envia para o Service obter o ID do utilizador
-            utilizador_id = self.service.get_utilizador_id(login, passhash)
+            # Envia para o Service obter o ID do utilizador apenas com base no login
+            utilizador_id = self.service.get_utilizador_id(login)
             return utilizador_id
         except Exception as e:
             print(f"Erro no controller ao obter ID do utilizador: {e}")
             return -1
 
-    def get_utilizador_info(self, id: int) -> Tuple[int, int, str, str, str,bool]:
+    def get_utilizador_info(self, id: int) -> Utilizador:
         try:
-            # Verifica se o ID é válido
-            if id < 0:
+            # Verifica se o ID é válido (geralmente IDs em bases de dados começam em 1, mas 0 ou positivo serve)
+            if id is None or id < 0:
                 print("Erro: ID de utilizador inválido.")
                 return None
 

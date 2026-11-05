@@ -1,27 +1,26 @@
-# bibliotecas
-import os
-from db.connection import initialize_database
-from src.views.utilizadorView import UtilizadorView
+from db.connection import initialize_database, reinitialize_database
 from src.views.membroView import MembroView
+from src.views.utilizadorView import UtilizadorView
 
-# Iniciação dos componentes do sistema
-view_uti = UtilizadorView()
-view_membro = MembroView()
 
 def main():
-    # Inicializa a base de dados
+    # Reinicia a database, meter False caso não queiras reiniciar a database
+    reinitialize_database(True)
+    # Inicializa a base de dados do SQL Server
     initialize_database()
 
+    # Instancia as views principais do sistema
+    view_uti = UtilizadorView()
+    view_membro = MembroView()
+
     while True:
-        # Exibe o menu principal e processa as opções do utilizador
+        # 1. Abre o menu principal do SpaceHub
         userLoged = view_uti.menu_principal()
-        
-        # Quand o utilizador estiver logado, chama o menu de registo de membro
-        menuOperation = view_membro.registar_membro_menu(userLoged)
-        if menuOperation == -2:
-            continue  # Volta ao menu principal se o utilizador deslogar
+
+        # Vai para o menu fluxo caso o membro esteja logado
+        if userLoged:
+            view_membro.fluxo_membro(userLoged)
+
 
 if __name__ == "__main__":
     main()
-
-

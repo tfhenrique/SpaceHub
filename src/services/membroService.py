@@ -1,4 +1,5 @@
 from src.repositories.membroRepository import MembroRepository
+from src.models.membro import Membro
 
 class MembroService:
 
@@ -25,3 +26,7 @@ class MembroService:
 
     def conectar_idMembro(self, id_utilizador: int, id_membro: int):
         return self.repository.conectar_idMembro(id_utilizador, id_membro)
+
+    def get_member_info(self, idMembro: int) -> Membro:
+        membro_info = self.repository.get_info(idMembro)
+        return membro_info

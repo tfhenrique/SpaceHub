@@ -63,6 +63,27 @@ def initialize_database():
     except pyodbc.Error as e:
         print(f"Erro ao inicializar o esquema no SQL Server: {e}")
 
+# Reinicia a base de dados para alterações
+def reinitialize_database(reset: bool):
+    try:
+        if(reset):
+            config_master = DB_CONFIG.replace("DATABASE=SpaceHub;", "DATABASE=master;")
+            
+            conn = pyodbc.connect(config_master, autocommit=True)
+            cursor = conn.cursor()
+    
+            # Verifica se a base de dados existe nas tabelas de sistema
+            cursor.execute("""
+                    IF EXISTS (SELECT * FROM sys.databases WHERE name = 'SpaceHub')
+                    BEGIN
+                        DROP DATABASE SpaceHub;
+                    END
+                """)
+    
+            conn.close()
+    except pyodbc.Error as e:
+        print(f"\n[Erro Base de Dados] {e}")
+
 
 if __name__ == "__main__":
     if testar_conexao():

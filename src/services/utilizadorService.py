@@ -1,3 +1,4 @@
+from src.models.utilizador import Utilizador
 from src.repositories.utilizadorRepository import UtilizadorRepository
 
 
@@ -13,34 +14,35 @@ class UtilizadorService:
             print("\n[Aviso] Já existe um utilizador com este nome.")
             return False
 
-        # Se não existir, manda o repository inserir na base de dados
-        return self.repository.inserir(login, passhash)
+        # Cria o objeto Utilizador para enviar para o repository
+        novo_utilizador = Utilizador(login=login, password_hash=passhash)
+
+        # Envia o objeto model para o repository inserir na base de dados
+        return self.repository.inserir(novo_utilizador)
 
     def autenticar(self, login: str, passhash: str) -> bool:
-        # Vai buscar o utilizador à base de dados para comparar os dados
+        # Vai buscar o objeto utilizador à base de dados
         utilizador = self.repository.buscar_por_login(login)
-        
+
         if not utilizador:
             return False
-        # A posição do password no tuple devolvido pelo fetchone() realizado pelo repository
-        password_na_bd = utilizador[3] 
 
-        if password_na_bd == passhash:
+        # Compara a password usando a propriedade limpa do objeto
+        if utilizador.password_hash == passhash:
             return True
-        
+
         return False
 
-    def get_utilizador_id(self, login: str, passhash: str) -> int:
-        # Vai buscar o utilizador à base de dados para obter o ID
-        utilizador = self.repository.buscar_por_login(login, passhash)
+    def get_utilizador_id(self, login: str) -> int:
+        # Vai buscar o utilizador à base de dados apenas com o login
+        utilizador = self.repository.buscar_por_login(login)
 
-        # Se o fetchone() não encontrar o utilizador, devolve none, então retornamos -1 para indicar que não foi encontrado
         if not utilizador:
             return -1
-        
-        password_na_bd = utilizador[3] 
 
-        if password_na_bd == passhash:
-            return utilizador[0]
-        
-        return -1
+        # Retorna o ID armazenado no objeto
+        return utilizador.idUtilizador
+
+    def get_utilizador_info(self, id: int) -> Utilizador | None:
+        # Retorna diretamente o objeto Utilizador encontrado pelo ID
+        return self.repository.buscar_por_id(id)

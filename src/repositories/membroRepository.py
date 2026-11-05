@@ -1,5 +1,6 @@
 import pyodbc
 from db.connection import DB_CONFIG
+from src.models.membro import Membro
 
 class MembroRepository:
 
@@ -67,3 +68,24 @@ class MembroRepository:
         except pyodbc.Error as e:
             print(f"\n[Erro Base de Dados] {e}")
             return False
+
+    def get_member_info(self, idMembro: int) -> Membro:
+        try:
+            conn = pyodbc.connect(self.db_config)
+            cursor = conn.cursor()
+
+            cursor.execute(
+                """
+                SELECT *
+                FROM Membro
+                WHERE idMembro = ?
+                """,
+                (idMembro)
+            )
+            member_info = cursor.fetchone()
+            conn.commit()
+            conn.close()
+            return member_info
+        except pyodbc.Error as e:
+            print(f"\n[Erro Base de Dados] {e}")
+            return None
