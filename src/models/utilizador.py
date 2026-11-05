@@ -1,6 +1,5 @@
 import pyodbc
 from werkzeug.security import generate_password_hash, check_password_hash
-from db import mensagem_erro
 
 
 class Utilizador:

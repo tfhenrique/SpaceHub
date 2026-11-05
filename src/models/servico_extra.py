@@ -1,7 +1,6 @@
 import pyodbc
 from datetime import date
 from decimal import Decimal
-from db import mensagem_erro
 
 # Preços de exemplo (a confirmar com o cliente): ficam gravados em custo_unit
 # no momento do registo, por isso mudar aqui não altera serviços já registados.

@@ -6,6 +6,7 @@ class MembroController:
     def __init__(self):
         # Instancia o Service para aplicar a lógica
         self.service = MembroService()
+        self.utilizador_controller = UtilizadorController() # utilizado para autenticar o membro e o utilizador
 
     def registar_membro(self, id_utilizador: int, nome: str, empresa: str, nif: str, email: str, telefone: str, daInicio: str, daFim: str) -> bool:
         try:
@@ -25,4 +26,18 @@ class MembroController:
             return sucesso
         except Exception as e:
             print(f"Erro no controller de registo de membro: {e}")
+            return False
+
+    def autenticar_membro(self, id_utilizador: int) -> bool:
+        try:
+            # Verifica se o utilizador tem um membro associado
+            utilizador_info = self.utilizador_controller.get_utilizador_info(id_utilizador)
+            if not utilizador_info or not utilizador_info[1]:
+                print("Nenhum membro associado a este utilizador.")
+                return False
+
+            print("Autenticação de membro bem-sucedida.")
+            return True
+        except Exception as e:
+            print(f"Erro no controller de autenticação de membro: {e}")
             return False

@@ -55,7 +55,7 @@ class MembroRepository:
             cursor.execute(
                 """
                 UPDATE Utilizador 
-                SET membro_id = ? 
+                SET membro_id = ?, perfil = 'MEMBER'
                 WHERE id_utilizador = ?
                 """,
                 (id_membro, id_utilizador),

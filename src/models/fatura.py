@@ -2,7 +2,6 @@ import calendar
 import pyodbc
 from datetime import date, timedelta
 from decimal import Decimal
-from db import mensagem_erro
 
 
 def adicionar_dias_uteis(data, n):

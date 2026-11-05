@@ -1,6 +1,5 @@
 import pyodbc
 from datetime import date, datetime
-from db import mensagem_erro
 
 
 class Visitante:

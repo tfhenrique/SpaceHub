@@ -1,7 +1,6 @@
 import pyodbc
 from datetime import datetime, date
 from decimal import Decimal, ROUND_HALF_UP
-from db import mensagem_erro
 
 
 def euros(valor):
