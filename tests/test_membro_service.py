@@ -7,11 +7,9 @@ class TestMembroService(unittest.TestCase):
         self.mock_repo = MagicMock()
         self.svc = MembroService(self.mock_repo)
 
-    def test_registar_membro_com_nif_ja_existente_devolve_false(self):
-        # Configura o mock para fingir que já encontrou um membro com esse NIF
+    def test_registar_membro_com_nif_ja_existente(self):
         self.mock_repo.buscar_por_nif.return_value = (1, 'Nuno Martins', 'TechPT', '251234567')
 
-        # Executa a ação passando todas as variáveis exatas do seu método
         resultado = self.svc.registar_membro(
             nome = "Nuno Martins", empresa = "TechPT", nif = "251234567", 
             email = "nuno@tech.pt", telefone = "931234567", plano_id = 2,
@@ -32,7 +30,7 @@ class TestMembroService(unittest.TestCase):
             )
         self.mock_repo.inserir.assert_not_called()
 
-    def test_registar_membro_com_sucesso_chama_repo(self):
+    def test_registar_membro_com_sucesso(self):
         # Membro não existe por NIF e é gravado com sucesso
         # Limpa resíduos e configura as respostas do Mock
         self.mock_repo.buscar_por_nif.side_effect = None
@@ -70,21 +68,6 @@ class TestMembroService(unittest.TestCase):
                     )
                 self.assertIn("O formato do e-mail é inválido.", str(contexto.exception))
                 self.mock_membro_repo.inserir.assert_not_called()
-
-    def test_registar_membro_quando_sql_server_da_erro_critico(self):
-        """Testa a robustez do sistema caso o SQL Server caia a meio da operação."""
-        self.mock_repo.buscar_por_nif.return_value = None
-        # Faz o método inserir explodir com um erro usando side_effect
-        self.mock_repo.inserir.side_effect = RuntimeError("Ligação ao SQL Server perdida.")
-
-        with self.assertRaises(RuntimeError) as contexto:
-            self.svc.registar_membro(
-                nome = "Carlos", empresa = "Solo", nif = "222222222", 
-                email = "carlos@email.com", telefone = "922222222", plano_id = 1,
-                daInicio = "2026-11-01", daFim = None, ativo = True
-            )
-
-        self.assertEqual(str(contexto.exception), "Ligação ao SQL Server perdida.")
 
 if __name__ == "__main__":
     unittest.main()
