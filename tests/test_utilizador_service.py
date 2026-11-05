@@ -21,12 +21,10 @@ class TestUtilizadorService(unittest.TestCase):
         self.mock_repo.inserir.return_value = True
         
         resultado = self.svc.registar_utilizador('novo_usuario', 'hash123')
-        # Asserts
         self.assertTrue(resultado)
         self.mock_repo.inserir.assert_called_once_with('novo_usuario', 'hash123')
         
     def test_autenticar_palavra_passe_errada(self):
-        # Passa uma hash na BD, mas tenta autenticar com outra
         self.mock_repo.buscar_por_login.return_value = (1, 'joao', 'joao@email.com', 'hash_real_na_bd')
         resultado = self.svc.autenticar('joao', 'hasha_errada_enviada')
         self.assertFalse(resultado)
@@ -41,11 +39,9 @@ class TestUtilizadorService(unittest.TestCase):
             with self.subTest(login_testado=login_invalido):
                 with self.assertRaises(ValueError):
                     self.svc.registar_utilizador(login_invalido, "hash123")               
-                # O repositório não ser chamado com dados sujos
                 self.mock_repo.inserir.assert_not_called()
 
-    def test_autenticar_utilizador_inexistente_devolve_false(self):
-            # Vários valores "falsy" que o repositório pode devolver
+    def test_autenticar_utilizador_inexistente(self):
             retornos = [None, (), [], 0, ""]
 
             for retorno in retornos:
