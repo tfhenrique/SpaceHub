@@ -1,4 +1,4 @@
-CREATE DATABASE SpaceHub
+CREATE DATABASE SpaceHub;
 GO
 
 USE SpaceHub
@@ -26,7 +26,7 @@ CREATE TABLE Membro(
     data_fim DATE,
     ativo BIT DEFAULT 1,
     CONSTRAINT UQ_Membro_email UNIQUE (email),
-    CONSTRAINT FK_Membro_Plano FOREIGN KEY (plano_id) REFERENCES PlanoSubscricao(idPlanoSubscricao),
+    --CONSTRAINT FK_Membro_Plano FOREIGN KEY (plano_id) REFERENCES PlanoSubscricao(idPlanoSubscricao),
     CONSTRAINT CK_Membro_nif CHECK (LEN(nif) = 9 AND nif NOT LIKE '%[^0-9]%'),
     CONSTRAINT CK_Membro_datas CHECK (data_fim IS NULL OR data_fim >= data_inicio)
 );

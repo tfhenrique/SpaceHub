@@ -10,3 +10,11 @@ Project sub-division
 - /src/controller : "serve para receber o input da view e comandar esse input para o seu determinado service"
 - /test : "é onde se pode testar codigos individuais"
 - /db : "guarda apenas dois ficheiros, schema.sql, spacehub.db que vai guardar tudo o que for feito no programa"
+
+Formatação de Mensagens:
+- Tabela rápida de códigos úteis:
+- Verde (Sucesso): \033[92m
+- Vermelho (Erros): \033[91m
+- Amarelo (Avisos): \033[93m
+- Azul/Ciano (Info): \033[96m
+- Reset (obrigatório no fim): \033[0m

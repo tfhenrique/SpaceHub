@@ -19,14 +19,14 @@ class UtilizadorRepository:
                 INSERT INTO Utilizador (membro_id, login_utilizador, password_hash, perfil, ativo) 
                 VALUES (?, ?, ?, ?, ?)
                 """,
-                (None, utilizador.login, utilizador.password_hash, "USER", 1),
+                (utilizador.membro_id, utilizador.login, utilizador.password_hash, utilizador.perfil, 1),
             )
 
             conn.commit()
             conn.close()
             return True
         except pyodbc.Error as e:
-            print(f"\n[Erro Base de Dados] {e}")
+            print(f"\n\033[91mErro no uti repository inserir: {e}\033[0m")
             return False
 
     def buscar_por_login(self, login: str) -> Utilizador | None:
@@ -48,7 +48,7 @@ class UtilizadorRepository:
             if row:
                 # Mapeia o resultado do SQL diretamente para a nossa classe Utilizador
                 return Utilizador(
-                    idUtilizador=row[0],
+                    id=row[0],
                     membro_id=row[1],
                     login=row[2],
                     password_hash=row[3],
@@ -57,7 +57,7 @@ class UtilizadorRepository:
                 )
             return None
         except pyodbc.Error as e:
-            print(f"\n[Erro Base de Dados] {e}")
+            print(f"\n\033[91mErro no uti repository no buscar_por_login: {e}\033[0m")
             return None
 
     def buscar_por_id(self, id_utilizador: int) -> Utilizador | None:
@@ -78,7 +78,7 @@ class UtilizadorRepository:
 
             if row:
                 return Utilizador(
-                    idUtilizador=row[0],
+                    id=row[0],
                     membro_id=row[1],
                     login=row[2],
                     password_hash=row[3],
@@ -87,5 +87,5 @@ class UtilizadorRepository:
                 )
             return None
         except pyodbc.Error as e:
-            print(f"\n[Erro Base de Dados] {e}")
+            print(f"\n\033[91mErro no uti repository no buscar_por_id: {e}\033[0m")
             return None

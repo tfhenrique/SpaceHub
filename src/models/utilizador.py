@@ -1,6 +1,6 @@
 class Utilizador:
 
-    def __init__(self, login, perfil, membro_id=None, ativo=True, password_hash=None, id=None):
+    def __init__(self, id=None, membro_id=None, login=None, password_hash=None, perfil="USER", ativo=True):
         self.id = id
         self.membro_id = membro_id
         self.login = login

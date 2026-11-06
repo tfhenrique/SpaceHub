@@ -6,20 +6,23 @@ from src.models.membro import Membro
 class MembroController:
     
     def __init__(self):
-        # Instancia o Service para aplicar a lógica
         self.service = MembroService()
-        self.utilizador_controller = UtilizadorController() # utilizado para autenticar o membro e o utilizador
+        self.utilizador_controller = UtilizadorController()
 
-    def registar_membro(self, id_utilizador: int, nome: str, empresa: str, nif: str, email: str, telefone: str, daInicio: str, daFim: str) -> bool:
+    def registar_membro(self, id_utilizador: int, nome: str, empresa: str, nif: str, email: str, telemovel: str) -> bool:
         try:
             # Verifica se os campos obrigatórios não estão vazios
-            if not nome or not empresa or not nif or not email or not telefone or not daInicio or not daFim:
-                print("Erro: Todos os campos obrigatórios devem ser preenchidos.")
+            if not nome or not empresa or not nif or not email or not telemovel:
+                print("\033[93mAviso: Todos os campos obrigatórios devem ser preenchidos.\033[0m")
                 return False
-
-            # Envia os dados para o Service tratar da lógica
-            # nome, empresa, nif, email, telefone, plano_id, daInicio, daFim, ativo
-            sucesso = self.service.registar_membro(nome, empresa, nif, email, telefone, 0, daInicio, daFim, True)
+            elif len(nif) != 9:
+                print("\033[93mAviso: NIF inválido\033[0m")
+                return False
+            elif len(telemovel) != 9:
+                print("\033[93mAviso: número de telemovel inválido\033[0m")
+                return False
+            # Envia os dados para o Service
+            sucesso = self.service.registar_membro(nome, empresa, nif, email, telemovel)
             if sucesso:
                 # Obtém o ID do membro recém-criado
                 id_membro = self.service.get_membro_id(nif)
@@ -27,7 +30,7 @@ class MembroController:
                 self.service.conectar_idMembro(id_utilizador, id_membro)
             return sucesso
         except Exception as e:
-            print(f"Erro no controller de registo de membro: {e}")
+            print(f"\033[91mErro no membro controller, registar_membro: {e}\033[0m")
             return False
 
     def autenticar_membro(self, id_utilizador: int) -> bool:
@@ -35,13 +38,13 @@ class MembroController:
             # Verifica se o utilizador tem um membro associado
             utilizador_info = self.utilizador_controller.get_utilizador_info(id_utilizador)
             if not utilizador_info or not utilizador_info[1]:
-                print("Nenhum membro associado a este utilizador.")
+                print("\033[93mAviso: Nenhum membro associado a este utilizador.\033[0m")
                 return False
 
-            print("Autenticação de membro bem-sucedida.")
+            print("\033[92mAutenticação de membro bem-sucedida.\033[0m")
             return True
         except Exception as e:
-            print(f"Erro no controller de autenticação de membro: {e}")
+            print(f"\033[91mErro no membro controller, autenticar_membro: {e}\033[0m")
             return False
 
     def get_member_info(self, id_membro: int) -> Membro:
@@ -49,5 +52,12 @@ class MembroController:
             membro_info = self.service.get_member_info(id_membro)
             return membro_info
         except Exception as e:
-            print(f"Erro no controller no método get_membro_info: {e}")
+            print(f"\033[91mErro no membro controller, get_membro_info: {e}\033[0m")
             return None
+
+    def mostrar_membros(self) -> list:
+        try:
+            return self.service.listar_membros()
+        except Exception as e:
+            print(f"\033[91mErro no controller ao listar membros: {e}\033[0m")
+            return []

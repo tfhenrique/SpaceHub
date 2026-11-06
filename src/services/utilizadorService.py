@@ -11,7 +11,7 @@ class UtilizadorService:
         # Verificar se já existe um utilizador com este login
         utilizador_existente = self.repository.buscar_por_login(login)
         if utilizador_existente:
-            print("\n[Aviso] Já existe um utilizador com este nome.")
+            print("\n\033[93mAviso: Já existe um utilizador com este nome.\033[0m")
             return False
 
         # Cria o objeto Utilizador para enviar para o repository
@@ -41,7 +41,7 @@ class UtilizadorService:
             return -1
 
         # Retorna o ID armazenado no objeto
-        return utilizador.idUtilizador
+        return utilizador.id
 
     def get_utilizador_info(self, id: int) -> Utilizador | None:
         # Retorna diretamente o objeto Utilizador encontrado pelo ID
