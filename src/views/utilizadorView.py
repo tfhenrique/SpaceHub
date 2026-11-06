@@ -14,7 +14,7 @@ class UtilizadorView:
 
     def exibir_menu(self) -> str:
         print(
-            "-" * 6, " Bem vindo a SpaceHub v1.0 ", 6 * "-", "\n",
+            "-" * 6, " Bem vindo a SpaceHub v1.01 ", 6 * "-", "\n",
             "1 - Criar Utilizador\n",
             "2 - Autenticar Utilizador\n",
             "0 - Sair"

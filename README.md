@@ -1,6 +1,8 @@
 # SpaceHub
 Its a project made by 3 devs Pedro, Julia, Tiago to complete a class task.
 
+About: SpaceHub is a Python-based application built with a layered architecture, designed for the integrated management of a coworking and corporate space. The system ensures the control of members, plans, and authentication, guaranteeing robust business logic and secure data persistence.
+
 Project sub-division
 - /docs : "documentos word que explicam a arquitetura do projeto"
 - /src/models : "classes de dominio, é onde são geradas as classes correspondentes às entidades"
