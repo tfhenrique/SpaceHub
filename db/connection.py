@@ -3,7 +3,7 @@ import pyodbc
 import time, os, subprocess
 
 # Parâmetros de configuração para a ligação ao SQL Server
-SERVER_NAME = "DESKTOP-NI0HD87"
+SERVER_NAME = "SOUSAPC"
 DATABASE_NAME = "SpaceHub"
 
 # Ligação à base de dados 'master' (usada para criar a SpaceHub se não existir)
@@ -63,7 +63,7 @@ def testar_conexao():
 
 # Cria as tabelas dentro da base de dados
 def initialize_database():
-    schema_path = Path("db/schema.sql")
+    schema_path = Path(F"D:\IEFP\Formação UFCDs\UFCD 7 10790\Github\SpaceHub\db\schema.sql")
 
     if not schema_path.exists():
         print(f"\033[93mAviso: O ficheiro {schema_path} não foi encontrado.\033[0m")
