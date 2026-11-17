@@ -1,5 +1,6 @@
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import messagebox
+
 from src.controllers.membroController import MembroController
 
 
@@ -9,14 +10,17 @@ class MembroView:
         self.utilizador_id = utilizador_id
         self.callback_voltar = callback_voltar
         self.membro_controller = MembroController()
+        self.membro_info = None
 
-        # Verifica se o utilizador já tem perfil de membro
-        self.membro_info = self.membro_controller.get_member_info(self.utilizador_id)
+        self.atualizar_dados_membro()
 
-        # Se não tiver perfil, abre formulário de registo antes do dashboard principal
-        if not self.membro_info:
-            if messagebox.askyesno("Aviso", "Ainda não tem um perfil de Membro associado.\nDeseja registar-se como Membro agora?"):
-                self.abrir_janela_registo()
+        if self.membro_info is None:
+            resposta = messagebox.askyesno(
+                "Registo de Membro",
+                "Ainda não tem um perfil de membro.\nDeseja registar-se agora?"
+            )
+            if resposta:
+                self.registar_membro_form()
             else:
                 if self.callback_voltar:
                     self.callback_voltar()
@@ -25,198 +29,336 @@ class MembroView:
 
         self.criar_menu_principal()
 
-    def criar_menu_principal(self):
-        # "Menu SpaceHub" (janela principal após login)
-        self.root.title("SpaceHub - Menu Membro")
-        self.root.geometry("500x450")
-        self.root.config(bg="#f0f2f5")
+    def atualizar_dados_membro(self):
+        # O utilizador_info[1] contém o ID do membro associado,
+        # de acordo com a utilização já feita no MembroController.
+        try:
+            utilizador_info = (
+                self.membro_controller.utilizador_controller
+                .get_utilizador_info(self.utilizador_id)
+            )
 
-        nome_utilizador = self.membro_info.nome if self.membro_info else "Utilizador"
+            if utilizador_info and len(utilizador_info) > 1 and utilizador_info[1]:
+                self.membro_info = self.membro_controller.get_member_info(
+                    utilizador_info[1]
+                )
+            else:
+                self.membro_info = None
+        except Exception as erro:
+            print("Erro ao obter perfil do membro:", erro)
+            self.membro_info = None
 
-        # Label de boas-vindas
-        lbl_bem_vindo = tk.Label(
-            self.root, 
-            text=f"Bem-vindo, {nome_utilizador}!", 
-            font=("Arial", 16, "bold"), 
-            bg="#f0f2f5", 
-            fg="#333333"
-        )
-        lbl_bem_vindo.pack(pady=20)
+    # T2.1 e T2.2 - Registo de membro
+    def registar_membro_form(self):
+        top = tk.Toplevel(self.root)
+        top.title("Registo de Membro")
+        top.geometry("400x370")
+        top.resizable(False, False)
 
-        # Frame com Botões
-        frame_botoes = tk.Frame(self.root, bg="#f0f2f5")
-        frame_botoes.pack(pady=10)
+        tk.Label(
+            top, text="Registo de Membro", font=("Arial", 14, "bold")
+        ).pack(pady=12)
 
-        btn_perfil = tk.Button(
-            frame_botoes, text="O Meu Perfil", width=25, height=2, 
-            bg="#007bff", fg="white", font=("Arial", 10, "bold"),
-            command=self.ver_detalhes_perfil
-        )
-        btn_perfil.pack(pady=5)
+        frame = tk.LabelFrame(top, text="Dados Profissionais")
+        frame.pack(fill="both", expand=True, padx=15, pady=8)
 
-        btn_lista = tk.Button(
-            frame_botoes, text="Lista de Membros", width=25, height=2, 
-            bg="#17a2b8", fg="white", font=("Arial", 10, "bold"),
-            command=self.abrir_lista_membros
-        )
-        btn_lista.pack(pady=5)
+        self.nome_var = tk.StringVar()
+        self.empresa_var = tk.StringVar()
+        self.nif_var = tk.StringVar()
+        self.email_var = tk.StringVar()
+        self.telemovel_var = tk.StringVar()
 
-        btn_sair = tk.Button(
-            frame_botoes, text="Terminar Sessão", width=25, height=2, 
-            bg="#dc3545", fg="white", font=("Arial", 10, "bold"),
-            command=self.terminar_sessao
-        )
-        btn_sair.pack(pady=5)
+        campos = [
+            ("Nome:", self.nome_var),
+            ("Empresa:", self.empresa_var),
+            ("NIF:", self.nif_var),
+            ("Email:", self.email_var),
+            ("Telefone:", self.telemovel_var)
+        ]
 
-        # Painel de estatísticas: LabelFrame "Espaço SpaceHub"
-        self.criar_painel_estatisticas()
+        for texto, variavel in campos:
+            linha = tk.Frame(frame)
+            linha.pack(fill="x", padx=10, pady=5)
+            tk.Label(linha, text=texto, width=12, anchor="w").pack(side="left")
+            tk.Entry(linha, textvariable=variavel, width=30).pack(side="left")
 
-    def criar_painel_estatisticas(self):
-        frame_stats = tk.LabelFrame(self.root, text=" Espaço SpaceHub ", font=("Arial", 10, "bold"), bg="#f0f2f5", fg="#555")
-        frame_stats.pack(fill="x", padx=20, pady=15)
+        def registar():
+            nome = self.nome_var.get().strip()
+            empresa = self.empresa_var.get().strip()
+            nif = self.nif_var.get().strip()
+            email = self.email_var.get().strip()
+            telefone = self.telemovel_var.get().strip()
 
-        self.lbl_total_membros = tk.Label(frame_stats, text="Total de Membros registados: A carregar...", bg="#f0f2f5", font=("Arial", 9))
-        self.lbl_total_membros.pack(anchor="w", padx=10, pady=2)
+            if not all([nome, empresa, nif, email, telefone]):
+                messagebox.showwarning(
+                    "Aviso", "Todos os campos são obrigatórios.", parent=top
+                )
+                return
 
-        btn_atualizar_stats = tk.Button(frame_stats, text="Atualizar", font=("Arial", 8), command=self.atualizar_estatisticas)
-        btn_atualizar_stats.pack(anchor="e", padx=10, pady=5)
+            if len(nif) != 9 or not nif.isdigit():
+                messagebox.showwarning(
+                    "Aviso", "O NIF deve conter exatamente 9 dígitos.", parent=top
+                )
+                return
 
-        self.atualizar_estatisticas()
+            if "@" not in email or "." not in email:
+                messagebox.showwarning("Aviso", "Email inválido.", parent=top)
+                return
 
-    def atualizar_estatisticas(self):
-        membros = self.membro_controller.mostrar_membros()
-        total = len(membros) if membros else 0
-        self.lbl_total_membros.config(text=f"Total de Membros registados: {total}")
+            if len(telefone) != 9 or not telefone.isdigit():
+                messagebox.showwarning(
+                    "Aviso", "O telefone deve conter exatamente 9 dígitos.", parent=top
+                )
+                return
 
+            sucesso = self.membro_controller.registar_membro(
+                self.utilizador_id, nome, empresa, nif, email, telefone
+            )
+
+            if sucesso:
+                messagebox.showinfo(
+                    "Sucesso", "Membro registado com sucesso!", parent=top
+                )
+                top.destroy()
+                self.atualizar_dados_membro()
+                if self.membro_info and hasattr(self, "lbl_bem_vindo"):
+                    self.lbl_bem_vindo.config(
+                        text=f"Bem-vindo, {self.membro_info.nome}!"
+                    )
+            else:
+                messagebox.showerror(
+                    "Erro",
+                    "Não foi possível registar o membro. Verifique se o NIF já existe.",
+                    parent=top
+                )
+
+        tk.Button(top, text="Registar", command=registar).pack(pady=12)
+
+    # Mantém compatibilidade com chamadas da versão anterior.
+    def abrir_janela_registo(self):
+        self.registar_membro_form()
+
+    # T2.3 e T2.4 - Perfil com Labels e edição com Entry
     def ver_detalhes_perfil(self):
-        if not self.membro_info:
-            messagebox.showerror("Erro", "Informações de membro não disponíveis.")
-            return
-        
-        detalhes = (
-            f"Nome: {self.membro_info.nome}\n"
-            f"Empresa: {self.membro_info.empresa}\n"
-            f"NIF: {self.membro_info.nif}\n"
-            f"Email: {getattr(self.membro_info, 'email', 'N/D')}\n"
-            f"Telemóvel: {getattr(self.membro_info, 'telemovel', 'N/D')}"
-        )
-        messagebox.showinfo("O Meu Perfil", detalhes)
+        self.atualizar_dados_membro()
 
+        if not self.membro_info:
+            messagebox.showerror("Erro", "Dados do membro não disponíveis.")
+            return
+
+        top = tk.Toplevel(self.root)
+        top.title("O Meu Perfil")
+        top.geometry("450x470")
+        top.resizable(False, False)
+
+        tk.Label(top, text="O Meu Perfil", font=("Arial", 14, "bold")).pack(pady=12)
+
+        frame = tk.LabelFrame(top, text="Dados do Membro")
+        frame.pack(fill="both", expand=True, padx=15, pady=8)
+
+        # Todos os dados do perfil são apresentados inicialmente em Labels.
+        dados = [
+            ("ID:", "id", False),
+            ("Nome:", "nome", True),
+            ("Empresa:", "empresa", True),
+            ("NIF:", "nif", True),
+            ("Email:", "email", True),
+            ("Telefone:", "telemovel", True),
+            ("Plano ID:", "plano_id", False),
+            ("Data de início:", "data_inicio", False),
+            ("Data de fim:", "data_fim", False),
+            ("Ativo:", "ativo", False)
+        ]
+
+        self.perfil_vars = {}
+        self.perfil_labels = {}
+        self.perfil_entries = {}
+        self.campos_editaveis = []
+
+        for linha_num, (texto, atributo, editavel) in enumerate(dados):
+            tk.Label(frame, text=texto, width=15, anchor="w").grid(
+                row=linha_num, column=0, padx=8, pady=4, sticky="w"
+            )
+
+            valor = getattr(self.membro_info, atributo, "")
+            if atributo == "ativo":
+                valor = "Sim" if valor else "Não"
+
+            variavel = tk.StringVar(value=str(valor if valor is not None else ""))
+            self.perfil_vars[atributo] = variavel
+
+            lbl = tk.Label(frame, textvariable=variavel, anchor="w", width=30)
+            lbl.grid(row=linha_num, column=1, padx=8, pady=4, sticky="w")
+            self.perfil_labels[atributo] = lbl
+
+            if editavel:
+                self.campos_editaveis.append(atributo)
+
+        def editar():
+            for atributo in self.campos_editaveis:
+                self.perfil_labels[atributo].grid_remove()
+
+                entry = tk.Entry(
+                    frame, textvariable=self.perfil_vars[atributo], width=30
+                )
+                linha = self.campos_editaveis.index(atributo) + 1
+                # Os campos editáveis ocupam as linhas 1 a 5.
+                entry.grid(row=linha, column=1, padx=8, pady=4, sticky="w")
+                self.perfil_entries[atributo] = entry
+
+            btn_editar.config(state="disabled")
+            btn_guardar.config(state="normal")
+
+        def guardar():
+            valores = {
+                atributo: self.perfil_vars[atributo].get().strip()
+                for atributo in self.campos_editaveis
+            }
+
+            if not all(valores.values()):
+                messagebox.showwarning(
+                    "Aviso", "Todos os campos são obrigatórios.", parent=top
+                )
+                return
+
+            nif = valores["nif"]
+            if len(nif) != 9 or not nif.isdigit():
+                messagebox.showwarning(
+                    "Aviso", "O NIF deve conter exatamente 9 dígitos.", parent=top
+                )
+                return
+
+            email = valores["email"]
+            if "@" not in email or "." not in email:
+                messagebox.showwarning("Aviso", "Email inválido.", parent=top)
+                return
+
+            telefone = valores["telemovel"]
+            if len(telefone) != 9 or not telefone.isdigit():
+                messagebox.showwarning(
+                    "Aviso", "O telefone deve conter exatamente 9 dígitos.", parent=top
+                )
+                return
+
+            if not messagebox.askyesno(
+                "Confirmar", "Deseja guardar as alterações?", parent=top
+            ):
+                return
+
+            sucesso = self.membro_controller.atualizar_membro(
+                self.membro_info.id,
+                valores["nome"],
+                valores["empresa"],
+                valores["nif"],
+                valores["email"],
+                valores["telemovel"]
+            )
+
+            if sucesso:
+                messagebox.showinfo(
+                    "Sucesso", "Perfil atualizado com sucesso!", parent=top
+                )
+                top.destroy()
+                self.atualizar_dados_membro()
+            else:
+                messagebox.showerror(
+                    "Erro",
+                    "Não foi possível atualizar o perfil. Verifique se o NIF já existe.",
+                    parent=top
+                )
+
+        botoes = tk.Frame(top)
+        botoes.pack(pady=10)
+
+        btn_editar = tk.Button(botoes, text="Editar", command=editar)
+        btn_editar.pack(side="left", padx=5)
+
+        btn_guardar = tk.Button(
+            botoes, text="Guardar Alterações", command=guardar, state="disabled"
+        )
+        btn_guardar.pack(side="left", padx=5)
+
+    def criar_menu_principal(self):
+        self.root.title("SpaceHub - Menu Membro")
+        self.root.geometry("500x350")
+
+        nome = self.membro_info.nome if self.membro_info else "Utilizador"
+        self.lbl_bem_vindo = tk.Label(
+            self.root, text=f"Bem-vindo, {nome}!", font=("Arial", 16, "bold")
+        )
+        self.lbl_bem_vindo.pack(pady=25)
+
+        tk.Button(
+            self.root, text="O Meu Perfil", width=25,
+            command=self.ver_detalhes_perfil
+        ).pack(pady=7)
+
+        tk.Button(
+            self.root, text="Lista de Membros", width=25,
+            command=self.abrir_lista_membros
+        ).pack(pady=7)
+
+        tk.Button(
+            self.root, text="Terminar Sessão", width=25,
+            command=self.terminar_sessao
+        ).pack(pady=7)
+
+    # Lista de membros já existente no projeto.
     def abrir_lista_membros(self):
-        # Janela "Lista de Membros" (Toplevel)
         top = tk.Toplevel(self.root)
         top.title("Lista de Membros")
-        top.geometry("700x400")
+        top.geometry("650x350")
 
-        # Frame esquerdo para Listbox e Scrollbar
-        frame_left = tk.Frame(top)
-        frame_left.pack(side="left", fill="both", expand=True, padx=10, pady=10)
+        frame_lista = tk.Frame(top)
+        frame_lista.pack(side="left", fill="both", expand=True, padx=10, pady=10)
 
-        scrollbar = tk.Scrollbar(frame_left)
+        scrollbar = tk.Scrollbar(frame_lista)
         scrollbar.pack(side="right", fill="y")
 
-        listbox = tk.Listbox(frame_left, yscrollcommand=scrollbar.set, font=("Courier", 10))
-        listbox.pack(side="left", fill="both", expand=True)
-        scrollbar.config(command=listbox.yview)
+        lista = tk.Listbox(frame_lista, yscrollcommand=scrollbar.set)
+        lista.pack(side="left", fill="both", expand=True)
+        scrollbar.config(command=lista.yview)
 
-        # Frame direito para painel lateral de detalhes
-        frame_right = tk.LabelFrame(top, text=" Detalhes do Membro ", font=("Arial", 10, "bold"), width=250)
-        frame_right.pack(side="right", fill="both", padx=10, pady=10)
-        frame_right.pack_propagate(False)
+        frame_detalhes = tk.LabelFrame(top, text="Detalhes do Membro")
+        frame_detalhes.pack(side="right", fill="both", padx=10, pady=10)
 
-        lbl_detalhe = tk.Label(frame_right, text="Selecione um membro\nna lista.", justify="left", font=("Arial", 9))
-        lbl_detalhe.pack(anchor="w", padx=10, pady=10)
+        lbl_detalhes = tk.Label(
+            frame_detalhes, text="Selecione um membro.", justify="left"
+        )
+        lbl_detalhes.pack(anchor="w", padx=10, pady=10)
 
-        # Obter dados através de membro_controller.mostrar_membros()
-        membros = self.membro_controller.mostrar_membros()
-        
-        # Mapeamento para guardar os objetos associados aos índices da listbox
+        membros = self.membro_controller.mostrar_membros() or []
         membros_dict = {}
-        if membros:
-            for idx, m in enumerate(membros):
-                # T3.4 — Formato "Nome — Empresa"
-                texto_linha = f"{m.nome} — {m.empresa}"
-                listbox.insert(tk.END, texto_linha)
-                membros_dict[idx] = m
 
-        # Evento de seleção na Listbox (<<ListboxSelect>>)
-        def ao_selecionar(event):
-            selection = listbox.curselection()
-            if selection:
-                index = selection[0]
-                m = membros_dict.get(index)
-                if m:
-                    texto_detalhes = (
-                        f"Nome: {m.nome}\n\n"
-                        f"Empresa: {m.empresa}\n"
-                        f"NIF: {m.nif}\n"
-                        f"Email: {getattr(m, 'email', 'N/D')}\n"
-                        f"Telemóvel: {getattr(m, 'telemovel', 'N/D')}\n"
-                        f"Plano ID: {m.plano_id}\n"
-                        f"Ativo: {'Sim' if m.ativo else 'Não'}"
-                    )
-                    lbl_detalhe.config(text=texto_detalhes)
+        for indice, membro in enumerate(membros):
+            lista.insert(tk.END, f"{membro.nome} - {membro.empresa}")
+            membros_dict[indice] = membro
 
-        listbox.bind('<<ListboxSelect>>', ao_selecionar)
+        def selecionar(event):
+            selecao = lista.curselection()
+            if selecao:
+                membro = membros_dict.get(selecao[0])
+                if membro:
+                    lbl_detalhes.config(text=(
+                        f"Nome: {membro.nome}\n"
+                        f"Empresa: {membro.empresa}\n"
+                        f"NIF: {membro.nif}\n"
+                        f"Email: {membro.email}\n"
+                        f"Telemóvel: {membro.telemovel}\n"
+                        f"Plano ID: {membro.plano_id}\n"
+                        f"Ativo: {'Sim' if membro.ativo else 'Não'}"
+                    ))
 
-    def abrir_janela_registo(self):
-        top_reg = tk.Toplevel(self.root)
-        top_reg.title("Registo de Membro")
-        top_reg.geometry("350x400")
-
-        tk.Label(top_reg, text="Registo de Membro", font=("Arial", 12, "bold")).pack(pady=10)
-
-        tk.Label(top_reg, text="Nome:").pack(anchor="w", padx=20)
-        entry_nome = tk.Entry(top_reg, width=35)
-        entry_nome.pack(padx=20)
-
-        tk.Label(top_reg, text="Empresa:").pack(anchor="w", padx=20)
-        entry_empresa = tk.Entry(top_reg, width=35)
-        entry_empresa.pack(padx=20)
-
-        tk.Label(top_reg, text="NIF:").pack(anchor="w", padx=20)
-        entry_nif = tk.Entry(top_reg, width=35)
-        entry_nif.pack(padx=20)
-
-        tk.Label(top_reg, text="Email:").pack(anchor="w", padx=20)
-        entry_email = tk.Entry(top_reg, width=35)
-        entry_email.pack(padx=20)
-
-        tk.Label(top_reg, text="Telemóvel:").pack(anchor="w", padx=20)
-        entry_tel = tk.Entry(top_reg, width=35)
-        entry_tel.pack(padx=20)
-
-        def submeter_registo():
-            sucesso = self.membro_controller.registar_membro(
-                self.utilizador_id,
-                entry_nome.get(),
-                entry_empresa.get(),
-                entry_nif.get(),
-                entry_email.get(),
-                entry_tel.get()
-            )
-            if sucesso:
-                messagebox.showinfo("Sucesso", f"Membro '{entry_nome.get()}' registado com sucesso!")
-                self.membro_info = self.membro_controller.get_member_info(self.utilizador_id)
-                top_reg.destroy()
-                # Atualiza a janela principal se necessário
-            else:
-                messagebox.showerror("Erro", "Falha ao registar o membro.")
-
-        tk.Button(top_reg, text="Registar", bg="#28a745", fg="white", width=20, command=submeter_registo).pack(pady=20)
+        lista.bind("<<ListboxSelect>>", selecionar)
 
     def terminar_sessao(self):
-        # Terminar Sessão fecha a janela e reabre a de autenticação (callback)
         if self.callback_voltar:
             self.callback_voltar()
         self.root.destroy()
 
 
-
-    # Exemplo na janela de login/autenticação:
-    def abrir_menu_membro(utilizador_id):
-        root.withdraw()  # Oculta a janela de login atual
-        janela_membro = tk.Toplevel(root)
-
-        # Passa a função de callback para reativar o login ao fechar/terminar sessão
-        MembroView(janela_membro, utilizador_id, callback_voltar=root.deiconify)
+# Exemplo de utilização no login:
+# janela_login.withdraw()
+# janela_membro = tk.Toplevel(janela_login)
+# MembroView(janela_membro, utilizador_id,
+#            callback_voltar=janela_login.deiconify)
