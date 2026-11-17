@@ -63,7 +63,7 @@ def testar_conexao():
 
 # Cria as tabelas dentro da base de dados
 def initialize_database():
-    schema_path = Path(F"D:\IEFP\Formação UFCDs\UFCD 7 10790\Github\SpaceHub\db\schema.sql")
+    schema_path = Path(__file__).resolve().parent / "schema.sql"
 
     if not schema_path.exists():
         print(f"\033[93mAviso: O ficheiro {schema_path} não foi encontrado.\033[0m")
