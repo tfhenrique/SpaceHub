@@ -5,18 +5,20 @@ from src.controllers.utilizadorController import UtilizadorController
 
 class UtilizadorView:
 
-    def __init__(self):
+    def __init__(self, root, callback_sucesso_login=None):
+        self.root = root    # janela principal vinda do main.py
         self.controller = UtilizadorController()
-        self.utilizador_id = None  # ID do utilizador autenticado (None = sem sessão)
-
+        self.utilizador_id = None  # ID do utilizador autenticado
+        self.callback_sucesso_login = callback_sucesso_login
         
-        self.root = tk.Tk()     # Janela principal
         self.root.title("SpaceHub — Gestão de Espaço")
         self.root.geometry("500x400")
         self.root.resizable(False, False)
 
         self.utilizador_var = tk.StringVar()
         self.password_var = tk.StringVar()
+        
+        self.exibir_menu()  # Exibe o menu de login ao iniciar a aplicação
 
     def exibir_menu(self):
                                 # LabelFrame de acesso
@@ -111,7 +113,3 @@ class UtilizadorView:
 
         tk.Button(membro, text="Terminar Sessão", command=terminar_sessao).pack()
         membro.protocol("WM_DELETE_WINDOW", terminar_sessao)
-
-
-if __name__ == "__main__":
-    UtilizadorView().menu_principal()
